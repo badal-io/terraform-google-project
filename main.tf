@@ -1,14 +1,14 @@
-// Locals variables : Module logic
-locals {
-  iam_permissions = "${compact(split(",", data.external.flatten.result["iam"]))}"
-}
-
 // Provides information on GCP provider config
 data "google_client_config" "default" {}
 
-// Flattens IAM Permissions for consumption via google_project_iam_binding
+# Flattens IAM Permissions for consumption via google_storage_bucket_iam_binding
 data "external" "flatten" {
   program = ["docker", "run", "muvaki/terraform-flatten:0.1.0", "iam", "${jsonencode(var.iam)}"]
+}
+
+# Locals variables : Module logic
+locals {
+  iam_permissions = "${compact(split(",", data.external.flatten.result["iam"]))}"
 }
 
 # Allows management of existing projects API (Authorative)
