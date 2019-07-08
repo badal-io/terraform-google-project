@@ -62,6 +62,7 @@ IAM input should be passed as roles (key) with list of members as a list value. 
 | Name | Description | 
 |------|-------------|
 | etag | List output of etags for each binding set per role |
+| project-id | Name of the created project |
 
 ## Docs:
 
