@@ -6,15 +6,11 @@ Supports following:
 - Authoritatively manage Project API's enabled 
 - Authoritatively manage Project Level IAM Roles
 
-
-## Prerequisite
-This module uses docker to flatten IAM permissions passed down to module. Ensure that you have docker installed as it uses [terraform-flatten](https://hub.docker.com/r/muvaki/terraform-flatten) image to flatten the IAM Map. Information about the image can be found [here](https://github.com/muvaki/terraform-flatten)
-
 ## Usage
 Example folder covers how to Manage Project enabled API's and IAM Permissions at the project level. IAM permissions are authorative and will cause confliect if you try to modify roles passed down to the module in any other form. Sample config:
 
 ```hcl
-module "auto-vpc" {
+module "my-project" {
     source  = "github.com/muvaki/terraform-google-project"
 
     services  = [
@@ -65,16 +61,14 @@ IAM input should be passed as roles (key) with list of members as a list value. 
 
 | Name | Description | 
 |------|-------------|
-| result | iam flattened result |
 | etag | List output of etags for each binding set per role |
 
 ## Docs:
 
 module reference docs: 
-- terraform.io (v0.11.11)
+- terraform.io (v0.12.3)
 - GCP [Project](https://cloud.google.com/resource-manager/docs/creating-managing-projects)
 - GCP [IAM](https://cloud.google.com/iam/)
-- Muvaki [Terraform Flatten](https://github.com/muvaki/terraform-flatten)
 
 ### LICENSE
 

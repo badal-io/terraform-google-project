@@ -1,17 +1,16 @@
 // Provides information on GCP provider config
 data "google_client_config" "default" {}
 
-# Flattens IAM Permissions for consumption via google_storage_bucket_iam_binding
-data "external" "flatten" {
-  program = ["docker", "run", "muvaki/terraform-flatten:0.1.0", "iam", "${jsonencode(var.iam)}"]
-}
-
 # Locals variables : Module logic
 locals {
-  iam_permissions = "${compact(split(",", data.external.flatten.result["iam"]))}"
+  iam_permissions = [
+    for k, v in var.iam:
+    { "role" = k, "members" = v}
+  ]
 }
 
-# Allows management of existing projects API (Authorative)
+
+# # Allows management of existing projects API (Authorative)
 resource "google_project_services" "default" {
   project   = "${length(var.project) > 0 ? var.project : data.google_client_config.default.project}"
   services  = "${var.services}"
@@ -22,11 +21,9 @@ resource "google_project_iam_binding" "default" {
     count     = "${length(local.iam_permissions) > 0 ? length(local.iam_permissions) : 0}"
 
     project   = "${length(var.project) > 0 ? var.project : data.google_client_config.default.project}"
-    role      = "${trimspace(element(split("|", local.iam_permissions[count.index]), 0))}"
+    role      = "${trimspace(local.iam_permissions[count.index].role)}"
 
-    members   = [
-      "${compact(split(" ", element(split("|", local.iam_permissions[count.index]), 1)))}"
-    ]
+    members   = "${compact(local.iam_permissions[count.index].members)}"
 
     depends_on = ["google_project_services.default"]
 }
